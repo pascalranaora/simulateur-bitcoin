@@ -254,6 +254,13 @@ def generate_html():
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
+        
+        img {{
+            width: 100px;
+            margin: auto;
+            display: block;
+        }}
+        
         body {{
             font-family: 'Arial', sans-serif;
             background: #000;
@@ -439,7 +446,7 @@ def generate_html():
 <body>
     <div class="container">
         <div class="left">
-            <img style="padding-left:40%;width:15%;" src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
+            <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
             <h1>Simulateur site de minage</h1>
             <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur site de minage Bitcoin (2026-2032), avec loi de puissance pour le prix BTC (en EUR, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.
             Un mode "projection" est aussi proposé. En prenant des données du taux de hachage historique
