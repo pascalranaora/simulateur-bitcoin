@@ -171,25 +171,26 @@ def generate_sample_hash_csv():
     for i in range(10):
         try:
             data = tv.get_hist(symbol="HRATE",exchange="BCHAIN",interval=Interval.in_daily,n_bars=5000)
+            # Resample for complete daily data forward filled
+            data = data.resample('1D').ffill()
+            data.index = pd.to_datetime(data.index).date
+            data = data[data.index >= start_date.date()]
+            data['date'] = pd.to_datetime(data.index).date
+            data['date_integer'] = data['date'].apply(to_integer)
+            print(data['date_integer'])
+            data['EH/s'] = data.close / 1_000_000
+            df = data[['date','EH/s']]
+            print(df)
+            # Save to a local CSV file
+            output_file = 'sample_hashrate.csv'
+            df.to_csv(output_file, index=False)
+            print("Fichier sample_hashrate.csv généré")
             break
         except Exception as e:
             print("Iteration #"+str(i)+" has failed: "+str(e)+" retrying...")
             continue
-    # Resample for complete daily data forward filled
-    data = data.resample('1D').ffill()
-    data.index = pd.to_datetime(data.index).date
-    data = data[data.index >= start_date.date()]
-    data['date'] = pd.to_datetime(data.index).date
-    data['date_integer'] = data['date'].apply(to_integer)
-    print(data['date_integer'])
-    data['EH/s'] = data.close / 1_000_000
-    df = data[['date','EH/s']]
-    print(df)
-
-    # Save to a local CSV file
-    output_file = 'sample_hashrate.csv'
-    df.to_csv(output_file, index=False)
-    print("Fichier sample_hashrate.csv généré")
+    
+    
 
 def generate_sample_power_csv():
     """Génère un fichier CSV d'exemple pour la puissance du site."""
