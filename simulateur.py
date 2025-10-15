@@ -256,9 +256,9 @@ def generate_html():
         @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
         
         img {{
-            width: 100px;
-            margin: auto;
-            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }}
         
         body {{
