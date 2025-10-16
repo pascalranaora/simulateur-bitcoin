@@ -195,7 +195,7 @@ def get_hash_historical_data_csv():
 def generate_sample_power_csv():
     """Génère un fichier CSV d'exemple pour la puissance du site."""
     start_date = datetime(2018, 1, 1)
-    end_date = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
+    end_date = datetime(2018, 3, 1)
     current_date = start_date
     power_data = []
 
@@ -495,14 +495,12 @@ def generate_html():
     <div class="container">
         <div class="left">
             <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
-            <h1>Simulateur site de minage<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">
-            <p style="color: #FF9900;">Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.</p> 
-            </p>
-            </span>
-            </h1>
-            <p>Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global. 
+            <h1>Simulateur site de minage<span class="tooltip"></h1>
+            <p style="color: #FF9900;">Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.<br /> 
+            Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global.<br /> 
             Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.</p>
 
+            <h2>Paramètres & Données Historique</h2>
             <div class="file-upload">
                 <label>CSV Profil de Puissance Minable du Site   (format: date,MW) :</label>
                 <input type="file" id="powerCsv" accept=".csv">
@@ -558,7 +556,11 @@ def generate_html():
                 <input type="range" id="growthSlider" min="0" max="100" step="5" value="30">
                 <span id="growthValue">30</span>
             </div>
+            <h2 id="chart2-title">Hashrate Historique Réseau Bitcoin (EH/s)</h2>
+            <canvas id="hashChart" width="800" height="400"></canvas>
 
+            <h2 id="chart3-title">Prix moyen annualisé du Bitcoin (€)</h2>
+            <canvas id="priceChart" width="800" height="400"></canvas>
             
         </div>
 
@@ -566,19 +568,15 @@ def generate_html():
             <h1 id="site-name">Site : Données Démo</h1>
             <h2 id="chart1-title">Puissance de minage du site (MW/jour)</h2>
             <canvas id="powerChart" width="800" height="400"></canvas>
-
-            <h2 id="chart2-title">Hashrate Historique (EH/s)</h2>
-            <canvas id="hashChart" width="800" height="400"></canvas>
-
-            <h2 id="chart3-title">Prix moyen annualisé du Bitcoin (€)</h2>
-            <canvas id="priceChart" width="800" height="400"></canvas>
-
-            <h2 id="chart4-title">Revenus Annuels Projetés (M€)</h2>
+            <div id="results-table"></div>
+            <button type="button" class="collapsible" id="button-daily"><h4>Afficher la simulation journalière complète</h4></button>
+            <div class="collapsible-content" id="daily-results-table">
+            </div>
+            <h2 id="chart4-title">Revenus Annuels du Minage Bitcoin Projetés (M€)</h2>
             <canvas id="revenueChart" width="800" height="400"></canvas>
 
-            <h2 id="chart5-title">Revenus Cumulés Projetés (M€)</h2>
+            <h2 id="chart5-title">Revenus Cumulés du Minage Bitcoin Projetés (M€)</h2>
             <canvas id="cumulativeChart" width="800" height="400"></canvas>
-            <div id="results-table"></div>
             
                         
         </div>
@@ -747,7 +745,7 @@ def generate_html():
             const file = e.target.files[0];
             if (!file) return;
             loadedCsvName = file.name.replace(/\.[^/.]+$/, "");
-            document.getElementById('site-name').innerHTML = `Site de ${{loadedCsvName}}`;
+            document.getElementById('site-name').innerHTML = `Résultats site de ${{loadedCsvName}}`;
             const reader = new FileReader();
             reader.onload = function(ev) {{
                 const text = ev.target.result;
@@ -806,6 +804,14 @@ def generate_html():
             const checked = this.checked;
             document.getElementById('exponentSliderContainer').style.display = !checked ? 'none' : 'flex';
             document.getElementById('growthSliderContainer').style.display = !checked ? 'none' : 'flex';
+            //document.getElementById('daily-results-table').style.display = !checked ? 'block' : 'none';
+            let element = document.getElementById("button-daily");
+            let hidden = element.getAttribute("hidden");
+            if (!checked) {{
+            element.removeAttribute("hidden");
+            }} else {{
+            element.setAttribute("hidden", "hidden");
+            }}
             const dateCont = document.getElementById('dateRangeContainer');
             dateCont.style.display = !checked ? 'block' : 'none';
             updateSimulation();
@@ -833,17 +839,17 @@ def generate_html():
 
             if (!projection && loadedCsvName != '') {{
                 document.getElementById('chart1-title').innerHTML = `Puissance de minage site ${{loadedCsvName}} (MW/jour)`;
-                document.getElementById('chart2-title').innerHTML = `Hashrate Historique (EH/s)`;
-                document.getElementById('chart3-title').innerHTML = `Prix moyen Historique annualisé du Bitcoin (EUR)`;
-                document.getElementById('chart4-title').innerHTML = `Revenus Annuels Simulés site ${{loadedCsvName}} (M EUR)`;
-                document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Simulés site ${{loadedCsvName}} (M EUR)`;
+                document.getElementById('chart2-title').innerHTML = `Hashrate historique réseau Bitcoin (EH/s)`;
+                document.getElementById('chart3-title').innerHTML = `Prix moyen historique annualisé du Bitcoin (€)`;
+                document.getElementById('chart4-title').innerHTML = `Revenus Annuels Simulés site ${{loadedCsvName}} (M€)`;
+                document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Simulés site ${{loadedCsvName}} (M€)`;
             }}
             if (projection && loadedCsvName != '') {{
                 document.getElementById('chart1-title').innerHTML = `Puissance de minage site ${{loadedCsvName}} (MW/jour)`;
-                document.getElementById('chart2-title').innerHTML = `Hashrate Historique (EH/s)`;
-                document.getElementById('chart3-title').innerHTML = `Prix moyen annualisé & projeté du Bitcoin (EUR)`;
-                document.getElementById('chart4-title').innerHTML = `Revenus Annuels Projetés site ${{loadedCsvName}} (M EUR)`;
-                document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Projetés site ${{loadedCsvName}} (M EUR)`;
+                document.getElementById('chart2-title').innerHTML = `Hashrate historique Réseau Bitcoin (EH/s)`;
+                document.getElementById('chart3-title').innerHTML = `Prix moyen annualisé & projeté du Bitcoin (€)`;
+                document.getElementById('chart4-title').innerHTML = `Revenus Annuels Projetés site ${{loadedCsvName}} (M€)`;
+                document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Projetés site ${{loadedCsvName}} (M€)`;
             }}
             
             const effective_MW = powerAverage;
@@ -870,7 +876,7 @@ def generate_html():
                     end = new Date(minPowerDate.getTime() + endOffset * 86400000);
                 }} else {{
                     const hashDates = hashData.map(d => new Date(d.date)).sort((a, b) => a - b);
-                    start = hashDates[0];
+                    start = hashDates[1];
                     end = hashDates[hashDates.length - 1];
                 }}
                 let current = new Date(start);
@@ -934,7 +940,7 @@ def generate_html():
                     yearSums[year] = {{btc: 0, revenue: 0, days: 0, prices: [], hashPcts: []}};
                 }}
                 yearSums[year].btc += btcMinedDay;
-                yearSums[year].revenue += revenueDayEur;
+                yearSums[year].revenue += netRevenueDayEur;
                 yearSums[year].days++;
                 yearSums[year].prices.push(priceEur);
                 yearSums[year].hashPcts.push(hashPct);
@@ -945,7 +951,7 @@ def generate_html():
                         priceEur: priceEur,
                         hashPct: hashPct,
                         btcMined: btcMinedDay,
-                        revenueEur: revenueDayEur,
+                        revenueEur: netRevenueDayEur,
                         siteHash: dailySiteHashEh,
                         globalHash: dailyGlobalHash,
                         cumulativeEur: cumulativeRevenueEur
@@ -979,11 +985,11 @@ def generate_html():
                     <thead>
                         <tr>
                             <th>Année</th>
-                            <th>Prix BTC (EUR)</th>
+                            <th>Prix BTC (€)</th>
                             <th>% Hash Site</th>
                             <th>BTC Minés</th>
-                            <th>Revenus Annuels (M EUR)</th>
-                            <th>Revenus Cumulés (M EUR)</th>
+                            <th>Revenus Annuels (M€)</th>
+                            <th>Revenus Cumulés (M€)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1007,7 +1013,7 @@ def generate_html():
                             <td>Total</td>
                             <td colspan="2"></td>
                             <td>${{Math.round(simulationData.reduce((sum, r) => sum + r.btcMined, 0)).toLocaleString()}} BTC</td>
-                            <td colspan="2">${{Math.round(simulationData[simulationData.length - 1]?.cumulativeEur || 0).toLocaleString()}} M EUR</td>
+                            <td colspan="2">${{Math.round(simulationData[simulationData.length - 1]?.cumulativeEur || 0).toLocaleString()}} M€</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -1018,20 +1024,18 @@ def generate_html():
             // Add daily table if projection
             if (!projection && dailySimulation.length > 0) {{
                 let dailyTableHTML = `
-                    <button type="button" class="collapsible"><h4>Afficher la simulation journalière complète</h4></button>
-                    <div class="collapsible-content">
                     <h2>Résultats de Simulation Quotidienne</h2>
                     <table>
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Prix BTC (EUR)</th>
+                                <th>Prix BTC (€)</th>
                                 <th>% Hash Site</th>
                                 <th>Hash rate du site (EH/s)</th>
                                 <th>Hash rate du reseau bitcoin (EH/s)</th>
                                 <th>BTC Minés</th>
-                                <th>Revenus Quotidiens (EUR)</th>
-                                <th>Revenus Quotidiens cumules (EUR)</th>
+                                <th>Revenus Quotidiens (€)</th>
+                                <th>Revenus Quotidiens cumules (€)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1069,26 +1073,28 @@ def generate_html():
                             </tr>
                         </tfoot>
                     </table>
-                </div>
                 `;
-                fullHTML += dailyTableHTML;
+                //fullHTML += dailyTableHTML;
+                //document.getElementById('button-daily').style.display = !projection ? 'block' : 'none';
+                document.getElementById('daily-results-table').innerHTML = dailyTableHTML;
             }}
 
             document.getElementById('results-table').innerHTML = fullHTML;
+            
 
             // Mise à jour des graphiques
             if (priceChart) priceChart.destroy();
             if (revenueChart) revenueChart.destroy();
             if (cumulativeChart) cumulativeChart.destroy();
 
-            // Graphique 1: Prix BTC (EUR)
+            // Graphique 1: Prix BTC (€)
             const priceCtx = document.getElementById('priceChart').getContext('2d');
             priceChart = new Chart(priceCtx, {{
                 type: 'line',
                 data: {{
                     labels: simulationData.map(d => d.year.toString()),
                     datasets: [{{
-                        label: 'Prix BTC (EUR)',
+                        label: 'Prix BTC (€)',
                         data: simulationData.map(d => d.priceEur),
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -1099,21 +1105,21 @@ def generate_html():
                 options: {{
                     responsive: true,
                     scales: {{
-                        y: {{ beginAtZero: false, title: {{ display: true, text: 'Prix (EUR)' }} }},
+                        y: {{ beginAtZero: false, title: {{ display: true, text: 'Prix (€)' }} }},
                         x: {{ title: {{ display: true, text: 'Année' }} }}
                     }},
                     //plugins: {{ title: {{ display: true, text: 'Projection du Prix du Bitcoin (Loi de Puissance)' }} }}
                 }}
             }});
 
-            // Graphique 2: Revenus Annuels (M EUR)
+            // Graphique 2: Revenus Annuels (M€)
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
             revenueChart = new Chart(revenueCtx, {{
                 type: 'bar',
                 data: {{
                     labels: simulationData.map(d => d.year.toString()),
                     datasets: [{{
-                        label: 'Revenus (M EUR)',
+                        label: 'Revenus (M€)',
                         data: simulationData.map(d => d.revenueEur),
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']
                     }}]
@@ -1121,21 +1127,21 @@ def generate_html():
                 options: {{
                     responsive: true,
                     scales: {{
-                        y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus (M EUR)' }} }},
+                        y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus (M€)' }} }},
                         x: {{ title: {{ display: true, text: 'Année' }} }}
                     }},
                     //plugins: {{ title: {{ display: true, text: 'Revenus Annuels Projetés' }} }}
                 }}
             }});
 
-            // Graphique 3: Revenus Cumulés (M EUR)
+            // Graphique 3: Revenus Cumulés (M€)
             const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
             cumulativeChart = new Chart(cumulativeCtx, {{
                 type: 'line',
                 data: {{
                     labels: simulationData.map(d => d.year.toString()),
                     datasets: [{{
-                        label: 'Revenus Cumulés (M EUR)',
+                        label: 'Revenus Cumulés (M€)',
                         data: simulationData.map(d => d.cumulativeEur),
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.2)',
@@ -1146,7 +1152,7 @@ def generate_html():
                 options: {{
                     responsive: true,
                     scales: {{
-                        y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus Cumulés (M EUR)' }} }},
+                        y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus Cumulés (M€)' }} }},
                         x: {{ title: {{ display: true, text: 'Année' }} }}
                     }},
                     //plugins: {{ title: {{ display: true, text: 'Projection des Revenus Cumulés' }} }}
