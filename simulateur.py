@@ -272,7 +272,7 @@ def generate_html():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compteur Bitcoin France</title>
+    <title>Simulateur Site de Minage Bitcoin</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <style>
@@ -420,7 +420,7 @@ def generate_html():
         border-radius: 3px;
         }}
 
-        /* Inpiut Track */
+        /* Input Track */
 
         /* Chrome, Safari, Edge (Chromium) */
         input[type="range"]::-webkit-slider-runnable-track {{
@@ -436,7 +436,31 @@ def generate_html():
         border-radius: 3px;
         }}
 
-        /* Inpiut Thumb */
+        /* Style the button that is used to open and close the collapsible content */
+        .collapsible {{
+        background-color: #000;
+        color: orange;
+        cursor: pointer;
+        padding: 25px;
+        width: 80%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }}
+
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .collapsible:hover {{
+        background-color: #000;
+        }}
+
+        /* Style the collapsible content. Note: hidden by default */
+        .collapsible-content {{
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #000;
+        }}
 
         /* Chrome, Safari, Edge (Chromium) */
         input[type="range"]::-webkit-slider-thumb {{
@@ -471,10 +495,13 @@ def generate_html():
     <div class="container">
         <div class="left">
             <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
-            <h1>Simulateur site de minage</h1>
-            <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur site de minage Bitcoin (2026-2032), avec loi de puissance pour le prix BTC (en EUR, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.
-            Un mode "projection" est aussi proposé. En prenant des données du taux de hachage historique
+            <h1>Simulateur site de minage<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">
+            <p style="color: #FF9900;">Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.</p> 
             </p>
+            </span>
+            </h1>
+            <p>Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global. 
+            Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.</p>
 
             <div class="file-upload">
                 <label>CSV Profil de Puissance Minable du Site   (format: date,MW) :</label>
@@ -515,7 +542,11 @@ def generate_html():
                 <input type="range" id="feesSlider" min="0.010" max="0.2" step="0.002" value="0.022">
                 <span id="feesValue">0.022</span>
             </div>
-
+            <div class="slider-container">
+                <label>Frais électricité (€/kWh) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Coût de l'électricité en euro par kWh. Dans le cas d'une exploitation publique de la surcapacité nucléaire, le coût d'optimisation est nul.</span></span></label>
+                <input type="range" id="electricitySlider" min="0" max="0.3" step="0.01" value="0">
+                <span id="electricityValue">0</span>
+            </div>
             <div class="slider-container" id="exponentSliderContainer" style="display:none;">
                 <label>Exposant loi de puissance :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Exposant dans P(t) = a * t^exposant. 5.6 est calibré historique ; plus haut = croissance plus agressive.</span></span></label>
                 <input type="range" id="exponentSlider" min="4" max="7" step="0.1" value="5.6">
@@ -539,25 +570,37 @@ def generate_html():
             <h2 id="chart2-title">Hashrate Historique (EH/s)</h2>
             <canvas id="hashChart" width="800" height="400"></canvas>
 
-            <h2 id="chart3-title">Prix moyen annualisé du Bitcoin (EUR)</h2>
+            <h2 id="chart3-title">Prix moyen annualisé du Bitcoin (€)</h2>
             <canvas id="priceChart" width="800" height="400"></canvas>
 
-            <h2 id="chart4-title">Revenus Annuels Projetés (M EUR)</h2>
+            <h2 id="chart4-title">Revenus Annuels Projetés (M€)</h2>
             <canvas id="revenueChart" width="800" height="400"></canvas>
 
-            <h2 id="chart5-title">Revenus Cumulés Projetés (M EUR)</h2>
+            <h2 id="chart5-title">Revenus Cumulés Projetés (M€)</h2>
             <canvas id="cumulativeChart" width="800" height="400"></canvas>
             <div id="results-table"></div>
             
-            
-
-            
+                        
         </div>
         </div>
     </div>
 
 
     <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {{
+        coll[i].addEventListener("click", function() {{
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {{
+            content.style.display = "none";
+            }} else {{
+            content.style.display = "block";
+            }}
+        }});
+        }}
 
         // Paramètres de simulation
         const GENESIS_DATE = new Date(2009, 0, 3);  // 3 janv 2009
@@ -746,6 +789,10 @@ def generate_html():
             document.getElementById('feesValue').textContent = this.value;
             updateSimulation();
         }};
+        document.getElementById('electricitySlider').oninput = function() {{
+            document.getElementById('electricityValue').textContent = this.value;
+            updateSimulation();
+        }};
         document.getElementById('startDateSlider').oninput = function() {{
             updateStartDateValue();
             updateSimulation();
@@ -781,6 +828,7 @@ def generate_html():
             const exponent = parseFloat(document.getElementById('exponentSlider').value);
             ANNUAL_GROWTH_RATE = 1 + (parseFloat(document.getElementById('growthSlider').value) / 100);
             FEES_PER_BLOCK = parseFloat(document.getElementById('feesSlider').value);
+            const electricityCost = parseFloat(document.getElementById('electricitySlider').value);
             const projection = document.getElementById('projectionMode').checked;
 
             if (!projection && loadedCsvName != '') {{
@@ -874,7 +922,13 @@ def generate_html():
                 const totalBtcDay = avgReward * BLOCKS_PER_DAY;
                 const btcMinedDay = (hashPct / 100) * totalBtcDay;
                 const revenueDayEur = btcMinedDay * priceEur;
-                cumulativeRevenueEur += revenueDayEur;
+
+                // Electricity cost
+                const dailyEnergyKwh = dailyMw * 1000 * 24;
+                const dailyCostEur = dailyEnergyKwh * electricityCost;
+                const netRevenueDayEur = revenueDayEur - dailyCostEur;
+                cumulativeRevenueEur += netRevenueDayEur;
+                
 
                 if (!yearSums[year]) {{
                     yearSums[year] = {{btc: 0, revenue: 0, days: 0, prices: [], hashPcts: []}};
@@ -964,6 +1018,8 @@ def generate_html():
             // Add daily table if projection
             if (!projection && dailySimulation.length > 0) {{
                 let dailyTableHTML = `
+                    <button type="button" class="collapsible"><h4>Afficher la simulation journalière complète</h4></button>
+                    <div class="collapsible-content">
                     <h2>Résultats de Simulation Quotidienne</h2>
                     <table>
                         <thead>
@@ -1013,6 +1069,7 @@ def generate_html():
                             </tr>
                         </tfoot>
                     </table>
+                </div>
                 `;
                 fullHTML += dailyTableHTML;
             }}
