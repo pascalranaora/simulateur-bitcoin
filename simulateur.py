@@ -257,7 +257,8 @@ def generate_html():
         @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
         
         img {{
-            position: absolute;
+            position: relative;
+            width: 100px;
             left: 50%;
             transform: translateX(-50%);
         }}
@@ -465,7 +466,7 @@ def generate_html():
 
             <div class="mode-container">
                 <label>Mode projection :</label>
-                <input type="checkbox" id="projectionMode" checked>
+                <input type="checkbox" id="projectionMode">
             </div>
 
             <div id="dateRangeContainer" style="display: none;">
@@ -493,13 +494,13 @@ def generate_html():
                 <span id="feesValue">0.022</span>
             </div>
 
-            <div class="slider-container" id="exponentSliderContainer">
+            <div class="slider-container" id="exponentSliderContainer" style="display:none;">
                 <label>Exposant loi de puissance :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Exposant dans P(t) = a * t^exposant. 5.6 est calibré historique ; plus haut = croissance plus agressive.</span></span></label>
                 <input type="range" id="exponentSlider" min="4" max="7" step="0.1" value="5.6">
                 <span id="exponentValue">5.6</span>
             </div>
 
-            <div class="slider-container" id="growthSliderContainer">
+            <div class="slider-container" id="growthSliderContainer" style="display:none;">
                 <label>Croissance hash/an (%):<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Croissance annuelle estimée du hash global (~50%/an historique). Dilue le % français sans upgrade hardware.</span></span></label>
                 <input type="range" id="growthSlider" min="0" max="100" step="5" value="30">
                 <span id="growthValue">30</span>
@@ -509,9 +510,9 @@ def generate_html():
         </div>
 
         <div class="right">
-            
+            <h1 id="site-name">Site : Données Démo</h1>
             <div id="results-table"></div>
-            <h2>Puissance du Site (MW)</h2>
+            <h2>Puissance de minage du site (MW/jour)</h2>
             <canvas id="powerChart" width="800" height="400"></canvas>
 
             <h2>Hashrate Historique (EH/s)</h2>
@@ -551,6 +552,7 @@ def generate_html():
         let hashData = []; // {{date: string, ehs: number}}
         let EFFICIENCY = 18;
         let minPowerDate, maxPowerDate;
+        let loadedCsvName = '';
 
         let priceChart, revenueChart, cumulativeChart, hashChart, powerChart;
 
@@ -675,6 +677,8 @@ def generate_html():
         function handlePowerCsv(e) {{
             const file = e.target.files[0];
             if (!file) return;
+            oadedCsvName = file.name;
+            document.getElementById('siteTitle').innerHTML = `Site de ${{loadedCsvName}}`;
             const reader = new FileReader();
             reader.onload = function(ev) {{
                 const text = ev.target.result;
