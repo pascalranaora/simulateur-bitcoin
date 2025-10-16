@@ -53,11 +53,7 @@ Ouvrez `index.html` dans un navigateur pour interagir avec le simulateur.
 
 2. **Interface HTML** :
    - Ouvrez `index.html`.
-   - Ajustez les sliders :
-     - **Part de marché** : Pourcentage hypothétique (ex. : 0.03 pour 3% en France).
-     - **Puissance (MW)** : Puissance moyenne du site.
-     - **Années** : Durée de projection (défaut : 7).
-     - **Exposant** : Paramètre de la loi de puissance (défaut : 5.6).
+   - Ajustez les sliders.
    - Cochez/décochez **Projection** pour basculer entre modes.
    - Visualisez les graphiques : Revenus cumulés, prix projeté, etc.
 
@@ -277,7 +273,7 @@ if __name__ == "__main__":
 - Lance tout : calculs, CSV, HTML.
 
 ### Limites et Améliorations
-- **Limites** : Pas de modélisation des coûts ; dépend de APIs externes (fallbacks inclus).
+- **Limites** : Pas de modélisation des coûts.
 - **Améliorations** : Ajouter coûts énergétiques ; support pour halvings futurs ; interface JS plus avancée ; tests unitaires.
 
 ## Contribution

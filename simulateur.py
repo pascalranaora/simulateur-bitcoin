@@ -195,7 +195,7 @@ def get_hash_historical_data_csv():
 def generate_sample_power_csv():
     """Génère un fichier CSV d'exemple pour la puissance du site."""
     start_date = datetime(2018, 1, 1)
-    end_date = datetime(2018, 3, 1)
+    end_date = datetime(2020, 1, 1)
     current_date = start_date
     power_data = []
 
@@ -496,8 +496,9 @@ def generate_html():
         <div class="left">
             <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
             <h1>Simulateur site de minage<span class="tooltip"></h1>
-            <p style="color: #FF9900;">Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.<br /> 
-            Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global.<br /> 
+            <p style="color: #FF9900;">
+            Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global.
+            Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.
             Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.</p>
 
             <h2>Paramètres & Données Historique</h2>
@@ -567,6 +568,7 @@ def generate_html():
         <div class="right">
             <h1 id="site-name">Site : Données Démo</h1>
             <h2 id="chart1-title">Puissance de minage du site (MW/jour)</h2>
+            <h4 id="average-power"></h4>
             <canvas id="powerChart" width="800" height="400"></canvas>
             <div id="results-table"></div>
             <button type="button" class="collapsible" id="button-daily"><h4>Afficher la simulation journalière complète</h4></button>
@@ -1080,7 +1082,7 @@ def generate_html():
             }}
 
             document.getElementById('results-table').innerHTML = fullHTML;
-            
+            document.getElementById('average-power').innerHTML = projection ? 'Puissance (MW) minage journalier moyen du site' + ${{powerAverage}} + 'MW' : '';
 
             // Mise à jour des graphiques
             if (priceChart) priceChart.destroy();
