@@ -533,22 +533,22 @@ def generate_html():
 
         <div class="right">
             <h1 id="site-name">Site : Données Démo</h1>
-            <div id="results-table"></div>
-            <h2>Puissance de minage du site (MW/jour)</h2>
+            <h2 id="chart1-title">Puissance de minage du site (MW/jour)</h2>
             <canvas id="powerChart" width="800" height="400"></canvas>
 
-            <h2>Hashrate Historique (EH/s)</h2>
+            <h2 id="chart2-title">Hashrate Historique (EH/s)</h2>
             <canvas id="hashChart" width="800" height="400"></canvas>
 
-            <h2>Évolution Projetée du Prix du Bitcoin (EUR)</h2>
+            <h2 id="chart3-title">Prix moyen annualisé du Bitcoin (EUR)</h2>
             <canvas id="priceChart" width="800" height="400"></canvas>
 
-            <h2>Revenus Annuels Projetés (M EUR)</h2>
+            <h2 id="chart4-title">Revenus Annuels Projetés (M EUR)</h2>
             <canvas id="revenueChart" width="800" height="400"></canvas>
 
-            <h2>Revenus Cumulés Projetés (M EUR)</h2>
+            <h2 id="chart5-title">Revenus Cumulés Projetés (M EUR)</h2>
             <canvas id="cumulativeChart" width="800" height="400"></canvas>
-
+            <div id="results-table"></div>
+            
             
 
             
@@ -703,7 +703,7 @@ def generate_html():
         function handlePowerCsv(e) {{
             const file = e.target.files[0];
             if (!file) return;
-            oadedCsvName = file.name;
+            loadedCsvName = file.name.replace(/\.[^/.]+$/, "");
             document.getElementById('site-name').innerHTML = `Site de ${{loadedCsvName}}`;
             const reader = new FileReader();
             reader.onload = function(ev) {{
@@ -783,6 +783,21 @@ def generate_html():
             FEES_PER_BLOCK = parseFloat(document.getElementById('feesSlider').value);
             const projection = document.getElementById('projectionMode').checked;
 
+            if (!projection && loadedCsvName != '') {{
+                document.getElementById('chart1-title').innerHTML = `Puissance de minage site ${{loadedCsvName}} (MW/jour)`;
+                document.getElementById('chart2-title').innerHTML = `Hashrate Historique (EH/s)`;
+                document.getElementById('chart3-title').innerHTML = `Prix moyen Historique annualisé du Bitcoin (EUR)`;
+                document.getElementById('chart4-title').innerHTML = `Revenus Annuels Simulés site ${{loadedCsvName}} (M EUR)`;
+                document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Simulés site ${{loadedCsvName}} (M EUR)`;
+            }}
+            if (projection && loadedCsvName != '') {{
+                document.getElementById('chart1-title').innerHTML = `Puissance de minage site ${{loadedCsvName}} (MW/jour)`;
+                document.getElementById('chart2-title').innerHTML = `Hashrate Historique (EH/s)`;
+                document.getElementById('chart3-title').innerHTML = `Prix moyen annualisé & projeté du Bitcoin (EUR)`;
+                document.getElementById('chart4-title').innerHTML = `Revenus Annuels Projetés site ${{loadedCsvName}} (M EUR)`;
+                document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Projetés site ${{loadedCsvName}} (M EUR)`;
+            }}
+            
             const effective_MW = powerAverage;
             const effective_GW = effective_MW / 1000;
             SITE_HASH_EH_S = (1000 / efficiency) * effective_GW;
@@ -1030,7 +1045,7 @@ def generate_html():
                         y: {{ beginAtZero: false, title: {{ display: true, text: 'Prix (EUR)' }} }},
                         x: {{ title: {{ display: true, text: 'Année' }} }}
                     }},
-                    plugins: {{ title: {{ display: true, text: 'Projection du Prix du Bitcoin (Loi de Puissance)' }} }}
+                    //plugins: {{ title: {{ display: true, text: 'Projection du Prix du Bitcoin (Loi de Puissance)' }} }}
                 }}
             }});
 
@@ -1052,7 +1067,7 @@ def generate_html():
                         y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus (M EUR)' }} }},
                         x: {{ title: {{ display: true, text: 'Année' }} }}
                     }},
-                    plugins: {{ title: {{ display: true, text: 'Revenus Annuels Projetés' }} }}
+                    //plugins: {{ title: {{ display: true, text: 'Revenus Annuels Projetés' }} }}
                 }}
             }});
 
@@ -1077,7 +1092,7 @@ def generate_html():
                         y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus Cumulés (M EUR)' }} }},
                         x: {{ title: {{ display: true, text: 'Année' }} }}
                     }},
-                    plugins: {{ title: {{ display: true, text: 'Projection des Revenus Cumulés' }} }}
+                    //plugins: {{ title: {{ display: true, text: 'Projection des Revenus Cumulés' }} }}
                 }}
             }});
 
@@ -1111,7 +1126,7 @@ def generate_html():
                             }},
                             y: {{ title: {{ display: true, text: 'EH/s' }} }}
                         }},
-                        plugins: {{ title: {{ display: true, text: 'Hashrate Historique (Backtest)' }} }}
+                        //plugins: {{ title: {{ display: true, text: 'Hashrate Historique (Backtest)' }} }}
                     }}
                 }});
             }}
@@ -1146,7 +1161,7 @@ def generate_html():
                             }},
                             y: {{ title: {{ display: true, text: 'MW' }} }}
                         }},
-                        plugins: {{ title: {{ display: true, text: 'Puissance Minable du Site (MW)' }} }}
+                        //plugins: {{ title: {{ display: true, text: 'Puissance Minable du Site (MW)' }} }}
                     }}
                 }});
             }}
