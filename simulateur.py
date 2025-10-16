@@ -160,7 +160,7 @@ def calculate_opportunity_cost(share=0.03):  # 3% de part hypothétique
 def to_integer(dt_time):
     return 10000*dt_time.year + 100*dt_time.month + dt_time.day
 
-def generate_sample_hash_csv():
+def get_hash_historical_data_csv():
     """Génère un fichier CSV pour le hashrate historique."""
     start_date = datetime(2018, 1, 1)
     end_date = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
@@ -182,9 +182,9 @@ def generate_sample_hash_csv():
             df = data[['date','EH/s']]
             print(df)
             # Save to a local CSV file
-            output_file = 'sample_hashrate.csv'
+            output_file = 'historical_data_hashrate.csv'
             df.to_csv(output_file, index=False)
-            print("Fichier sample_hashrate.csv généré")
+            print("Fichier historical_data_hashrate.csv généré")
             break
         except Exception as e:
             print("Iteration #"+str(i)+" has failed: "+str(e)+" retrying...")
@@ -210,6 +210,25 @@ def generate_sample_power_csv():
         f.write(csv_content)
 
     print("Fichier sample_power.csv généré")
+
+def generate_demo_tricastin_mining_power_csv():
+    """Génère un fichier CSV d'exemple pour la puissance de minage du site Tricastin-1 estimé en moyenne journaliere a 40MW  et randomisé autour de cette moyenne de 20 a 60 MW."""
+    start_date = datetime(2018, 1, 1)
+    end_date = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
+    current_date = start_date
+    power_data = []
+
+    while current_date <= end_date:
+        mw = 20 + 40 * random.random()  # 20-60 MW
+        power_data.append(f"{current_date.date().isoformat()},{mw:.0f}")
+        current_date += timedelta(days=1)
+
+    csv_content = "date,MW\n" + "\n".join(power_data)
+
+    with open('Tricastin-1.csv', 'w', encoding='utf-8') as f:
+        f.write(csv_content)
+
+    print("Fichier Tricastin-1.csv généré")
 
 def load_sample_csv(filename):
     """Charge les données d'un fichier CSV d'exemple."""
@@ -238,11 +257,14 @@ def generate_html():
     
     # Load sample data
     generate_sample_power_csv()
-    generate_sample_hash_csv()
+    get_hash_historical_data_csv()
     get_historical_prices()
-    hash_sample = load_sample_csv('sample_hashrate.csv')
+    hash_sample = load_sample_csv('historical_data_hashrate.csv')
     power_sample = load_sample_csv('sample_power.csv')
     price_sample = load_sample_csv('historical_btcprice.csv')
+
+    # Generate some demo dummy data
+    generate_demo_tricastin_mining_power_csv()
 
     html_content = f"""
 <!DOCTYPE html>
@@ -258,7 +280,7 @@ def generate_html():
         
         img {{
             position: relative;
-            width: 100px;
+            width: 15vh;
             left: 50%;
             transform: translateX(-50%);
         }}
@@ -469,7 +491,7 @@ def generate_html():
                 <input type="checkbox" id="projectionMode">
             </div>
 
-            <div id="dateRangeContainer" style="display: none;">
+            <div id="dateRangeContainer" style="display: block;">
                 <div class="slider-container">
                     <label>Date de début :</label>
                     <input type="range" id="startDateSlider" min="0" max="0" step="1" value="0">
@@ -594,24 +616,28 @@ def generate_html():
                 minPowerDate = new Date(powerData[0].date);
                 maxPowerDate = new Date(powerData[powerData.length - 1].date);
             }}
+            else {{
+                minPowerDate = new Date(powerSample[0].date);
+                maxPowerDate = new Date(powerSample[powerData.length - 1].date);
+            }}
+            console.log('Min Power Date: ',minPowerDate);
+            console.log('Max Power Date: ',maxPowerDate);
             console.log('MW minage journalier moyen du site:', powerAverage);
         }}
 
         function initializeDateSliders() {{
-            if (powerData.length > 0) {{
-                const diffTime = maxPowerDate - minPowerDate;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                const startSlider = document.getElementById('startDateSlider');
-                const endSlider = document.getElementById('endDateSlider');
-                startSlider.max = diffDays - 1;
-                endSlider.max = diffDays - 1;
-                startSlider.min = 0;
-                endSlider.min = 0;
-                startSlider.value = 0;
-                endSlider.value = diffDays - 1;
-                updateStartDateValue();
-                updateEndDateValue();
-            }}
+            const diffTime = maxPowerDate - minPowerDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            const startSlider = document.getElementById('startDateSlider');
+            const endSlider = document.getElementById('endDateSlider');
+            startSlider.max = diffDays - 1;
+            endSlider.max = diffDays - 1;
+            startSlider.min = 0;
+            endSlider.min = 0;
+            startSlider.value = 0;
+            endSlider.value = diffDays - 1;
+            updateStartDateValue();
+            updateEndDateValue();
         }}
         
         // Load samples automatically
@@ -678,7 +704,7 @@ def generate_html():
             const file = e.target.files[0];
             if (!file) return;
             oadedCsvName = file.name;
-            document.getElementById('siteTitle').innerHTML = `Site de ${{loadedCsvName}}`;
+            document.getElementById('site-name').innerHTML = `Site de ${{loadedCsvName}}`;
             const reader = new FileReader();
             reader.onload = function(ev) {{
                 const text = ev.target.result;
@@ -705,9 +731,7 @@ def generate_html():
                 }}
                 initializeDateSliders();
                 const dateCont = document.getElementById('dateRangeContainer');
-                if (!document.getElementById('projectionMode').checked) {{
-                    dateCont.style.display = powerData.length > 0 ? 'block' : 'none';
-                }}
+                dateCont.style.display = !document.getElementById('projectionMode').checked ? 'block' : 'none';
                 updateSimulation();
             }};
             reader.readAsText(file);
@@ -736,7 +760,7 @@ def generate_html():
             document.getElementById('exponentSliderContainer').style.display = !checked ? 'none' : 'flex';
             document.getElementById('growthSliderContainer').style.display = !checked ? 'none' : 'flex';
             const dateCont = document.getElementById('dateRangeContainer');
-            dateCont.style.display = !checked && powerData.length > 0 ? 'block' : 'none';
+            dateCont.style.display = !checked ? 'block' : 'none';
             updateSimulation();
         }};
 
