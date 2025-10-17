@@ -531,8 +531,8 @@ def generate_html():
             </div>
             <div class="slider-container">
                 <label>Investissement initial (milliers €) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Investissement initial en milliers d'euros, déduit au début de la simulation.</span></span></label>
-                <input type="range" id="investmentSlider" min="1" max="50000" step="1" value="1">
-                <span id="investmentValue">1</span>
+                <input type="range" id="investmentSlider" min="0" max="50000" step="10" value="1000">
+                <span id="investmentValue">1000</span>
             </div>
             <div class="slider-container" id="efficiencySliderContainer">
                 <label>Efficacité Minage (J/TH) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Efficacité énergétique des ASICs (Joules par Terahash). Plus bas = plus efficace.</span></span></label>
