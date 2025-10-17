@@ -760,7 +760,7 @@ def generate_html():
             const file = e.target.files[0];
             if (!file) return;
             loadedCsvName = file.name.replace(/\.[^/.]+$/, "");
-            document.getElementById('site-name').innerHTML = `Résultats site de ${{loadedCsvName}}`;
+            document.getElementById('site-name').innerHTML = `Résultats ${{loadedCsvName}}`;
             const reader = new FileReader();
             reader.onload = function(ev) {{
                 const text = ev.target.result;
