@@ -211,25 +211,6 @@ def generate_sample_power_csv():
 
     print("Fichier sample_power.csv généré")
 
-def generate_demo_tricastin_mining_power_csv():
-    """Génère un fichier CSV d'exemple pour la puissance de minage du site Tricastin-1 estimé en moyenne journaliere a 40MW  et randomisé autour de cette moyenne de 20 a 60 MW."""
-    start_date = datetime(2018, 1, 1)
-    end_date = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
-    current_date = start_date
-    power_data = []
-
-    while current_date <= end_date:
-        mw = 20 + 40 * random.random()  # 20-60 MW
-        power_data.append(f"{current_date.date().isoformat()},{mw:.0f}")
-        current_date += timedelta(days=1)
-
-    csv_content = "date,MW\n" + "\n".join(power_data)
-
-    with open('Tricastin-1.csv', 'w', encoding='utf-8') as f:
-        f.write(csv_content)
-
-    print("Fichier Tricastin-1.csv généré")
-
 def load_sample_csv(filename):
     """Charge les données d'un fichier CSV d'exemple."""
     data = []
@@ -263,8 +244,7 @@ def generate_html():
     power_sample = load_sample_csv('sample_power.csv')
     price_sample = load_sample_csv('historical_btcprice.csv')
 
-    # Generate some demo dummy data
-    generate_demo_tricastin_mining_power_csv()
+    
 
     html_content = f"""
 <!DOCTYPE html>
@@ -1119,15 +1099,40 @@ def generate_html():
             if (revenueChart) revenueChart.destroy();
             if (cumulativeChart) cumulativeChart.destroy();
 
-            // Graphique 1: Prix BTC (€)
-            const priceCtx = document.getElementById('priceChart').getContext('2d');
-            priceChart = new Chart(priceCtx, {{
+            // Graphique 1: Prix BTC projection/simulation (€)
+            const priceCtx = document.getElementById('priceChart').getContext('2d'); 
+            if (projection) {{
+                priceChart = new Chart(priceCtx, {{
+                    type: 'line',
+                    data: {{
+                        labels: simulationData.map(d => d.year.toString()),
+                        datasets: [{{
+                            label: 'Prix BTC (€)',
+                            data: simulationData.map(d => d.priceEur),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        }}]
+                    }},
+                    options: {{
+                        responsive: true,
+                        scales: {{
+                            y: {{ beginAtZero: false, title: {{ display: true, text: 'Prix (€)' }} }},
+                            x: {{ title: {{ display: true, text: 'Année' }} }}
+                        }},
+                        //plugins: {{ title: {{ display: true, text: 'Projection du Prix du Bitcoin (Loi de Puissance)' }} }}
+                    }}
+                }});
+            }}
+            else {{ 
+                priceChart = new Chart(priceCtx, {{
                 type: 'line',
                 data: {{
-                    labels: simulationData.map(d => d.year.toString()),
+                    labels: btcHistoricalPrice.map(d => d.date),
                     datasets: [{{
                         label: 'Prix BTC (€)',
-                        data: simulationData.map(d => d.priceEur),
+                        data: btcHistoricalPrice.map(d => d.pr),
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         fill: true,
@@ -1142,7 +1147,8 @@ def generate_html():
                     }},
                     //plugins: {{ title: {{ display: true, text: 'Projection du Prix du Bitcoin (Loi de Puissance)' }} }}
                 }}
-            }});
+                }});
+            }}
 
             // Graphique 2: Revenus Annuels (M€)
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
@@ -1227,7 +1233,7 @@ def generate_html():
             }}
 
             // Graphique Puissance du Site
-            if (powerData.length > 0) {{
+            if (!projection && powerData.length > 0) {{
                 if (powerChart) powerChart.destroy();
                 const powerCtx = document.getElementById('powerChart').getContext('2d');
                 powerChart = new Chart(powerCtx, {{
