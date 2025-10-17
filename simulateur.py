@@ -551,7 +551,7 @@ def generate_html():
             <h2 id="chart2-title">Hashrate Historique Réseau Bitcoin (EH/s)</h2>
             <canvas id="hashChart" width="800" height="400"></canvas>
 
-            <h2 id="chart3-title">Prix moyen annualisé du Bitcoin (€)</h2>
+            <h2 id="chart3-title">Prix historique du Bitcoin (€)</h2>
             <canvas id="priceChart" width="800" height="400"></canvas>
             
         </div>
