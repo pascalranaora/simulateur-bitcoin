@@ -495,7 +495,7 @@ def generate_html():
     <div class="container">
         <div class="left">
             <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
-            <h1>Simulateur site de minage<span class="tooltip"></h1>
+            <h1>Simulateur site de minage</h1>
             <p style="color: #FF9900;">
             Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global.
             Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.
@@ -568,8 +568,8 @@ def generate_html():
         <div class="right">
             <h1 id="site-name">Site : Données Démo</h1>
             <h2 id="chart1-title">Puissance de minage du site (MW/jour)</h2>
-            <h4 id="average-power"></h4>
             <canvas id="powerChart" width="800" height="400"></canvas>
+            <h3 id="average-power"></h3>
             <div id="results-table"></div>
             <button type="button" class="collapsible" id="button-daily"><h4>Afficher la simulation journalière complète</h4></button>
             <div class="collapsible-content" id="daily-results-table">
@@ -579,9 +579,7 @@ def generate_html():
 
             <h2 id="chart5-title">Revenus Cumulés du Minage Bitcoin Projetés (M€)</h2>
             <canvas id="cumulativeChart" width="800" height="400"></canvas>
-            
-                        
-        </div>
+                       
         </div>
     </div>
 
@@ -812,6 +810,8 @@ def generate_html():
             if (!checked) {{
             element.removeAttribute("hidden");
             }} else {{
+            document.getElementById('daily-results-table').innerHTML = '';
+            document.getElementById('daily-results-table').style.display = 'none';
             element.setAttribute("hidden", "hidden");
             }}
             const dateCont = document.getElementById('dateRangeContainer');
@@ -1082,7 +1082,8 @@ def generate_html():
             }}
 
             document.getElementById('results-table').innerHTML = fullHTML;
-            document.getElementById('average-power').innerHTML = projection ? 'Puissance (MW) minage journalier moyen du site' + ${{powerAverage}} + 'MW' : '';
+            const powerAverageStr = 'Puissance (MW) minage journalier moyen du site: ' + Math.round(effective_MW).toLocaleString() + 'MW';
+            document.getElementById('average-power').innerHTML = projection ? powerAverageStr : '';
 
             // Mise à jour des graphiques
             if (priceChart) priceChart.destroy();
