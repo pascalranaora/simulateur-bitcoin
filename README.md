@@ -36,15 +36,15 @@ Le script principal `simulateur.py` récupère des données via des API (Blockst
 
 ## Utilisation
 
-1. Lancez le script Python :
+1. (Optionnel) Lancez le script Python ci-dessous pour mettre à jour le fichier `index.html` :
    ```
    python simulateur.py
    ```
 
-2. Ouvrez `index.html` dans un navigateur web. Vous verrez :
+2. Ouvrez le fichier `index.html` dans un navigateur web. Vous verrez :
    - Des sliders pour ajuster les paramètres (puissance MW, efficacité J/TH, coût €/MWh, etc.).
    - Des graphiques pour les données historiques (prix BTC, hashrate) et projections (loi de puissance, revenus cumulés).
-   - Une section pour charger un fichier CSV personnalisé pour la puissance du site.
+   - Une section pour charger un fichier CSV personnalisé pour la puissance du site de minage.
 
 3. Activez/désactivez la case "Projection" pour basculer entre les modes.
    - En mode simulation : Utilise les données historiques pour calculer les BTC minés et revenus passés.
