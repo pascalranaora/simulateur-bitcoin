@@ -529,11 +529,6 @@ def generate_html():
                     <span id="endDateValue"></span>
                 </div>
             </div>
-            <div class="slider-container">
-                <label>Investissement initial (milliers €) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Investissement initial en milliers d'euros, déduit au début de la simulation.</span></span></label>
-                <input type="range" id="investmentSlider" min="0" max="50000" step="10" value="1000">
-                <span id="investmentValue">1000</span>
-            </div>
             <div class="slider-container" id="efficiencySliderContainer">
                 <label>Efficacité Minage (J/TH) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Efficacité énergétique des ASICs (Joules par Terahash). Plus bas = plus efficace.</span></span></label>
                 <input type="range" id="efficiencySlider" min="1" max="50" step="1" value="18">
@@ -561,6 +556,18 @@ def generate_html():
                 <input type="range" id="growthSlider" min="0" max="100" step="5" value="30">
                 <span id="growthValue">30</span>
             </div>
+
+            <div id="initInvestContainer" style="display: block;">
+                <div class="slider-container">
+                    <label>Investissement initial (milliers €) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Investissement initial en milliers d'euros, déduit au début de la simulation.</span></span></label>
+                    <input type="range" id="investmentSlider" min="1" max="150000" step="1" value="1000">
+                    <span id="investmentValue">1000</span>
+                    <br />
+                    <label> ou entrer la valeur manuellement:</label>
+                    <input type="number" id="numInvestInput" value="1000" onchange="updateRangeInput(this.value)";>
+                </div>
+            </div>
+
             <h2 id="chart2-title">Hashrate Historique Réseau Bitcoin (EH/s)</h2>
             <canvas id="hashChart" width="800" height="400"></canvas>
 
@@ -589,6 +596,10 @@ def generate_html():
 
 
     <script>
+        function updateRangeInput(val) {{
+          document.getElementById('investmentSlider').value=val; 
+          document.getElementById('investmentValue').innerHTML=val;
+        }}
         var coll = document.getElementsByClassName("collapsible");
         var i;
 
@@ -795,8 +806,15 @@ def generate_html():
             document.getElementById('electricityValue').textContent = this.value;
             updateSimulation();
         }};
+        document.getElementById('numInvestInput').oninput = function() {{
+            document.getElementById('numInvestInput').textContent = this.value;
+            document.getElementById('investmentSlider').value = this.value; 
+            document.getElementById('investmentValue').innerHTML = this.value;
+            updateSimulation();
+        }};
         document.getElementById('investmentSlider').oninput = function() {{
             document.getElementById('investmentValue').textContent = this.value;
+            document.getElementById('numInvestInput').value = this.value;
             updateSimulation();
         }};
         document.getElementById('startDateSlider').oninput = function() {{
