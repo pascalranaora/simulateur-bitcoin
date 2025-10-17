@@ -477,7 +477,7 @@ def generate_html():
             <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
             <h1>Simulateur site de minage</h1>
             <p style="color: #FF9900;">
-            Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une loi de puissance pour le prix du Bitcoin, les halvings et la croissance du hashrate global.
+            Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une <a target="_blank" href="https://b1m.io"><strong>loi de puissance pour le prix du Bitcoin</strong></a>, les halvings et la croissance du hashrate global.
             Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.
             Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.</p>
 
@@ -540,11 +540,11 @@ def generate_html():
             <div id="initInvestContainer" style="display: block;">
                 <div class="slider-container">
                     <label>Investissement initial (milliers €) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Investissement initial en milliers d'euros, déduit au début de la simulation.</span></span></label>
-                    <input type="range" id="investmentSlider" min="1" max="150000" step="1" value="1000">
-                    <span id="investmentValue">1000</span>
+                    <input type="range" id="investmentSlider" min="0" max="150000" step="1" value="0">
+                    <span id="investmentValue">0</span>
                     <br />
                     <label> ou entrer la valeur manuellement:</label>
-                    <input type="number" id="numInvestInput" value="1000" onchange="updateRangeInput(this.value)";>
+                    <input type="number" id="numInvestInput" value="0" onchange="updateRangeInput(this.value)";>
                 </div>
             </div>
 
