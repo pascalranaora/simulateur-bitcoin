@@ -849,7 +849,7 @@ def generate_html():
             if (!projection && loadedCsvName != '') {{
                 document.getElementById('chart1-title').innerHTML = `Puissance de minage site ${{loadedCsvName}} (MW/jour)`;
                 document.getElementById('chart2-title').innerHTML = `Hashrate historique réseau Bitcoin (EH/s)`;
-                document.getElementById('chart3-title').innerHTML = `Prix moyen historique annualisé du Bitcoin (€)`;
+                document.getElementById('chart3-title').innerHTML = `Prix historique du Bitcoin (€)`;
                 document.getElementById('chart4-title').innerHTML = `Revenus Annuels Simulés site ${{loadedCsvName}} (M€)`;
                 document.getElementById('chart5-title').innerHTML = `Revenus Cumulés Simulés site ${{loadedCsvName}} (M€)`;
             }}
