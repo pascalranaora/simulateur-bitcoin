@@ -476,6 +476,7 @@ def generate_html():
         <div class="left">
             <img src="https://res.cloudinary.com/daabdiwnt/image/upload/v1760479746/INBI/LOGO-INBI_aezky1.webp" alt="Logo INBI"> 
             <h1>Simulateur site de minage</h1>
+            <p style="text-align: center;"><em><a target="_blank" href="https://www.youtube.com/watch?v=HX1Qo4pAqpc"><strong style="color:yellow;">Cliquez ici pour une explication en vidéo.</strong></a></em></p>
             <p style="color: #FF9900;">
             Ce simulateur permet de modéliser les revenus potentiels d'un site de minage en tenant compte de données historiques (saisir un fichier CSV donnant le 'Profil' moyen journalier de MW disponible, Hashrate historique ) et des projections futures basées sur une <a target="_blank" href="https://www.livre-bitcoin.fr/?page=45"><strong style="color:yellow;">loi de puissance pour le prix du Bitcoin</strong></a>, les halvings et la croissance du hashrate global.
             Simulateur de minage Bitcoin écrit en Python+Javascript. Le minage Bitcoin s'apparente à de l'optimisation sous contraintes de réseaux électriques.
