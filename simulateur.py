@@ -123,8 +123,8 @@ def calculate_opportunity_cost(share=0.03):  # 3% de part hypothétique
     current_date = date.today()
 
     total_mined_btc = calculate_mined_btc(start_block, current_block)
-    france_btc_past = total_mined_btc * share
-    value_eur_past = france_btc_past * price_eur
+    site_btc_past = total_mined_btc * share
+    value_eur_past = site_btc_past * price_eur
     total_euros_past = int(value_eur_past)  # En euros complets
 
     # Données historiques pour le graphique
@@ -142,7 +142,7 @@ def calculate_opportunity_cost(share=0.03):  # 3% de part hypothétique
     power_points, A, exponent = get_power_law_points(current_date)
 
     return {
-        'france_btc_past': france_btc_past,
+        'site_btc_past': site_btc_past,
         'total_euros_past': total_euros_past,
         'price_eur': price_eur,
         'share': share,
@@ -529,7 +529,11 @@ def generate_html():
                     <span id="endDateValue"></span>
                 </div>
             </div>
-
+            <div class="slider-container">
+                <label>Investissement initial (milliers €) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Investissement initial en milliers d'euros, déduit au début de la simulation.</span></span></label>
+                <input type="range" id="investmentSlider" min="1" max="50000" step="1" value="1">
+                <span id="investmentValue">1</span>
+            </div>
             <div class="slider-container" id="efficiencySliderContainer">
                 <label>Efficacité Minage (J/TH) :<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Efficacité énergétique des ASICs (Joules par Terahash). Plus bas = plus efficace.</span></span></label>
                 <input type="range" id="efficiencySlider" min="1" max="50" step="1" value="18">
@@ -569,7 +573,7 @@ def generate_html():
             <h1 id="site-name">Site : Données Démo</h1>
             <h2 id="chart1-title">Puissance de minage du site (MW/jour)</h2>
             <canvas id="powerChart" width="800" height="400"></canvas>
-            <h3 id="average-power"></h3>
+            <h3 style="color: #F7931A;" id="average-power"></h3>
             <div id="results-table"></div>
             <button type="button" class="collapsible" id="button-daily"><h4>Afficher la simulation journalière complète</h4></button>
             <div class="collapsible-content" id="daily-results-table">
@@ -791,6 +795,10 @@ def generate_html():
             document.getElementById('electricityValue').textContent = this.value;
             updateSimulation();
         }};
+        document.getElementById('investmentSlider').oninput = function() {{
+            document.getElementById('investmentValue').textContent = this.value;
+            updateSimulation();
+        }};
         document.getElementById('startDateSlider').oninput = function() {{
             updateStartDateValue();
             updateSimulation();
@@ -837,6 +845,7 @@ def generate_html():
             ANNUAL_GROWTH_RATE = 1 + (parseFloat(document.getElementById('growthSlider').value) / 100);
             FEES_PER_BLOCK = parseFloat(document.getElementById('feesSlider').value);
             const electricityCost = parseFloat(document.getElementById('electricitySlider').value);
+            const initialInvestment = parseInt(document.getElementById('investmentSlider').value) * 1000;
             const projection = document.getElementById('projectionMode').checked;
 
             if (!projection && loadedCsvName != '') {{
@@ -897,7 +906,8 @@ def generate_html():
             }}
 
             let yearSums = {{}};
-            let cumulativeRevenueEur = 0;
+            //let cumulativeRevenueEur = 0;
+            cumulativeRevenueEur = -initialInvestment;
             let dailySimulation = []; // For projection daily results
 
             sortedDates.forEach(dateStr => {{
@@ -964,7 +974,8 @@ def generate_html():
             // Build yearly simulation data
             let sortedYears = Object.keys(yearSums).sort((a, b) => parseInt(a) - parseInt(b));
             let simulationData = [];
-            let runningCum = 0;
+            //let runningCum = 0;
+            let runningCum = -initialInvestment;
             sortedYears.forEach(y => {{
                 const ys = yearSums[y];
                 const avgPrice = ys.prices.reduce((a, b) => a + b, 0) / ys.prices.length;
