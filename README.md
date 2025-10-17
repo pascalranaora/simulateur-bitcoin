@@ -150,8 +150,7 @@ if __name__ == "__main__":
 - Lance la génération de l'HTML lors de l'exécution du script.
 
 ## Contributions
-Développé initialement par Pascal Ranaora
-Les contributions sont bienvenues ! Ouvrez une issue ou une pull request pour des améliorations, comme l'ajout de plus d'API ou de visualisations.
+Développé par Pascal Ranaora.
 
 ## Licence
 MIT License - Voir [LICENSE](LICENSE) pour plus de détails.
