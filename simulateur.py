@@ -534,7 +534,7 @@ def generate_html():
             </div>
 
             <div class="slider-container" id="growthSliderContainer" style="display:none;">
-                <label>Croissance hash/an (%):<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Croissance annuelle estimée du hash global (~50%/an historique). Dilue le % français sans upgrade hardware.</span></span></label>
+                <label>Croissance hash/an (%):<span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Croissance annuelle estimée du hash global (~50%/an historique). Dilue le % du hachage du site de minage sans upgrade hardware.</span></span></label>
                 <input type="range" id="growthSlider" min="0" max="100" step="5" value="30">
                 <span id="growthValue">30</span>
             </div>
