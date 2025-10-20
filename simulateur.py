@@ -253,6 +253,7 @@ def generate_html():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulateur Site de Minage Bitcoin</title>
+    <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/daabdiwnt/image/upload/v1760992725/ArticleBTC/Galaxy_mqivqu.ico">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <style>
