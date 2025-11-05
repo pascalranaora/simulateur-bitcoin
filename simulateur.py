@@ -486,7 +486,7 @@ def generate_html():
 
             <h2>Paramètres & Données Historique</h2>
             <div class="file-upload">
-                <label>CSV Profil de Puissance Minable du Site   (format: date,MW) :</label>
+                <label>CSV Profil de Puissance Minable du Site (format: date,MW) (<em style="color:yellow;"><a target="_blank" href="https://github.com/pascalranaora/simulateur-bitcoin/tree/main/test_data">Samples test disponibles ici</a></em>) :</label>
                 <input type="file" id="powerCsv" accept=".csv">
             </div>
 
