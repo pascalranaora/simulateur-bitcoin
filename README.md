@@ -153,7 +153,7 @@ if __name__ == "__main__":
 Développé par Pascal Ranaora.
 
 ## Licence
-MIT License - Voir [LICENSE](LICENSE) pour plus de détails.
+Open-source libre.
 
 ## Avertissement
 Ce simulateur est à des fins éducatives et de modélisation. Les projections sont basées sur des modèles hypothétiques et ne constituent pas un conseil financier. 
