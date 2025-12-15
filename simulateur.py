@@ -1002,8 +1002,8 @@ def generate_html():
                             <th>Prix BTC (€)</th>
                             <th>% Hash Site</th>
                             <th>BTC Minés</th>
-                            <th>Revenus Annuels (M€)</th>
-                            <th>Revenus Cumulés (M€)</th>
+                            <th>Revenus Annuels (€)</th>
+                            <th>Revenus Cumulés (€)</th>
                         </tr>
                     </thead>
                     <tbody>
